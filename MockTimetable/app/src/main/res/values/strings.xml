@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MockTimetable</string>
+    <string name="monday">Thứ 2</string>
+    <string name="tuesday">Thứ 3</string>
+    <string name="wednesday">Thứ 4</string>
+    <string name="thursday">Thứ 5</string>
+    <string name="friday">Thứ 6</string>
+    <string name="Saturday">Thứ 7</string>
+</resources>
