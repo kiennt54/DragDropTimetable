@@ -16,22 +16,24 @@
             android:id="@+id/linear_timetable"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:orientation="vertical"
-            android:padding="7dp">
+            android:layout_gravity="center"
+     >
 
             <RelativeLayout
-                android:layout_width="480dp"
-                android:layout_height="wrap_content"
+                android:layout_width="420dp"
+                android:layout_height="70dp"
+                android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_marginBottom="30dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
-                    android:text="Timetable"
+                    android:text="@string/title_table_timetable"
                     android:textColor="@color/colorPrimaryDark"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <ImageView
                     android:id="@+id/recyclerBin"
@@ -44,6 +46,7 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerTimetabe"
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
@@ -71,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:text="List of lesson name"
+            android:text="@string/title_table_lesson"
             android:textAlignment="center"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="20sp" />
@@ -83,7 +86,7 @@
 
         <Button
             android:id="@+id/btn_EditLesson"
-            android:layout_width="240dp"
+            android:layout_width="@dimen/edit_button_width"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:background="@drawable/border_button"

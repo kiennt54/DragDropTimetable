@@ -11,13 +11,13 @@ import com.example.phongvu.mocktimetable.models.Lesson;
 import java.util.Map;
 import java.util.Set;
 import static android.view.DragEvent.ACTION_DROP;
-import static com.example.phongvu.mocktimetable.commons.Constants.TIME_TABLE_DRAG;
+import static com.example.phongvu.mocktimetable.commons.Constants.TIMETABLE_DRAG;
 
 public class CellDragAndDropListener implements View.OnDragListener{
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
-    TableAdapter mTableAdapter;
+    private TableAdapter mTableAdapter;
 
     public CellDragAndDropListener(TableAdapter tableAdapter, RecyclerView recyclerView){
         this.mRecyclerView = recyclerView;
@@ -39,7 +39,7 @@ public class CellDragAndDropListener implements View.OnDragListener{
                 }
 
                 if(mTableAdapter.getmListCellData().get(dropPos).getLesson().getName().equals("")){
-                    if(MainActivity.dragMode == TIME_TABLE_DRAG && startedPos >= -1){
+                    if(MainActivity.dragMode == TIMETABLE_DRAG && startedPos >= -1){
                         mTableAdapter.getmListCellData().set(dropPos,cellData);
                         mTableAdapter.getmListCellData().set(startedPos,
                                 new CellData(new Lesson("")));

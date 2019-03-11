@@ -1,46 +1,47 @@
 package com.example.phongvu.mocktimetable.activities;
 
-import android.content.Context;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.PixelFormat;
+import android.content.pm.ActivityInfo;
+import android.net.Uri;
+import android.os.Parcelable;
 import android.speech.RecognizerIntent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.DragEvent;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewOverlay;
-import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RemoteViews;
 import android.widget.Toast;
 
 import com.example.phongvu.mocktimetable.R;
 import com.example.phongvu.mocktimetable.adapters.LessonAdapter;
 import com.example.phongvu.mocktimetable.adapters.TableAdapter;
+import com.example.phongvu.mocktimetable.commons.Constants;
+import com.example.phongvu.mocktimetable.dao.ScheduleDao;
 import com.example.phongvu.mocktimetable.listeners.ClickListener;
-import com.example.phongvu.mocktimetable.listeners.LessonTouchListener;
+import com.example.phongvu.mocktimetable.listeners.RecyclerBinListener;
 import com.example.phongvu.mocktimetable.models.CellData;
 import com.example.phongvu.mocktimetable.models.Lesson;
+import com.example.phongvu.mocktimetable.widgets.AppWidgetSchedule;
+import com.example.phongvu.mocktimetable.widgets.ScheduleProvider;
+import com.example.phongvu.mocktimetable.widgets.ScheduleService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
-import static com.example.phongvu.mocktimetable.commons.Constants.TIME_TABLE_DRAG;
 
 public class MainActivity extends AppCompatActivity implements ClickListener {
 
@@ -78,75 +79,59 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
 
     private int mPositionEdit;
 
-    private Button mBtnEdit;
+    private LinearLayout mDisableLayoutOverlay;
+
+    private ScheduleDao mDao;
+
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        createTestCells();
-
-        createTestLessons();
-
-        InitView();
-        InitAction();
-
-        mRecyclerBin.setOnDragListener(new View.OnDragListener() {
-            @Override
-            public boolean onDrag(View v, DragEvent event) {
-                switch (event.getAction()) {
-                    case DragEvent.ACTION_DRAG_ENTERED:
-                        if (dragMode == TIME_TABLE_DRAG) {
-                            mRecyclerBin.startAnimation(AnimationUtils.loadAnimation(MainActivity.this,
-                                    R.anim.scale_recyclerbin));
-                        }
-                        break;
-                    case DragEvent.ACTION_DROP:
-                        int startedPos = -1;
-                        Set<Map.Entry<Integer, CellData>> draggingCell = MainActivity.draggingCell.entrySet();
-                        for (Map.Entry<Integer, CellData> entry : draggingCell) {
-                            startedPos = entry.getKey();
-                        }
-                        if (dragMode == TIME_TABLE_DRAG) {
-                            mTableAdapter.getmListCellData().set(startedPos, new CellData(new Lesson("")));
-                        }
-
-                        mTableAdapter.notifyDataSetChanged();
-                        break;
-                }
-                return true;
-            }
-        });
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        mDao = new ScheduleDao(this);
+        mListCellData = (ArrayList<CellData>) Constants.createTestCells();
+        mListLesson = (ArrayList<Lesson>) Constants.createTestLesson();
+        initView();
+        initAction();
     }
 
-    private void InitAction() {
+    private void initAction() {
         btnEditLesson.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 mEditMode = !mEditMode;
-
                 if (mEditMode) {
                     btnEditLesson.setText("Cancel editting");
-                    LinearLayout linear_timetable = findViewById(R.id.overlay_view);
                     FrameLayout frame_timetable = findViewById(R.id.frame_timetable);
-                    linear_timetable.setVisibility(View.VISIBLE);
+                    mDisableLayoutOverlay.setVisibility(View.VISIBLE);
                     enableDisableView(frame_timetable, false);
-                    mLessonAdapter = new LessonAdapter(mListLesson, MainActivity.this);
-                    mLessonAdapter.isTouch = false;
+                    mLessonAdapter.setmIsItemTouchable(false);
                     mLessonAdapter.setClickListener(MainActivity.this);
                     mRecyclerLesson.setAdapter(mLessonAdapter);
                 } else {
                     btnEditLesson.setText("Edit Lesson Name");
-                    LinearLayout linear_timetable = findViewById(R.id.overlay_view);
-                    linear_timetable.setVisibility(View.GONE);
+                    mDisableLayoutOverlay.setVisibility(View.GONE);
                     FrameLayout frame_timetable = findViewById(R.id.frame_timetable);
                     enableDisableView(frame_timetable, true);
-                    mLessonAdapter = new LessonAdapter(mListLesson, MainActivity.this);
-                    mLessonAdapter.isTouch = true;
+                    mLessonAdapter.setmIsItemTouchable(true);
                     mRecyclerLesson.setAdapter(mLessonAdapter);
                 }
+            }
+        });
+
+        mRecyclerBin.setOnDragListener(new RecyclerBinListener(this, mRecyclerBin, mTableAdapter, mLessonAdapter));
+
+        id = getIntent().getIntExtra(AppWidgetSchedule.ID_WIDGET, 0);
+
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDao.deleteDataSubject();
+                mDao.insertListSubject(mTableAdapter.getmListCellData());
+                AppWidgetSchedule.sendRefreshBroadcast(MainActivity.this, id);
             }
         });
     }
@@ -163,75 +148,51 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
         }
     }
 
-    private void InitView() {
+    private void initView() {
+        mDisableLayoutOverlay = findViewById(R.id.overlay_view);
         btnOK = findViewById(R.id.btn_OK);
         btnCancel = findViewById(R.id.btn_Cancel);
         btnEditLesson = findViewById(R.id.btn_EditLesson);
         mRecyclerTimetabe = findViewById(R.id.recyclerTimetabe);
         mRecyclerLesson = findViewById(R.id.recyclerLesson);
         mRecyclerBin = findViewById(R.id.recyclerBin);
-        mManagerTimetable = new GridLayoutManager(this, 6);
+        mManagerTimetable = new GridLayoutManager(this, 7);
         mManagerLesson = new GridLayoutManager(this, 3);
         mRecyclerTimetabe.setLayoutManager(mManagerTimetable);
         mTableAdapter = new TableAdapter(mListCellData, this);
-        mLessonAdapter = new LessonAdapter(mListLesson, this);
+        mLessonAdapter = new LessonAdapter(mListLesson, this, true);
         mLessonAdapter.setClickListener(MainActivity.this);
         mRecyclerTimetabe.setAdapter(mTableAdapter);
         mRecyclerLesson.setAdapter(mLessonAdapter);
         mRecyclerLesson.setLayoutManager(mManagerLesson);
     }
 
-    private void createTestLessons() {
-        mListLesson = new ArrayList<>();
-        mListLesson.add(new Lesson("Math"));
-        mListLesson.add(new Lesson("IT"));
-        mListLesson.add(new Lesson("English"));
-        mListLesson.add(new Lesson("Physic"));
-        mListLesson.add(new Lesson("Chermistry"));
-        mListLesson.add(new Lesson(""));
-        mListLesson.add(new Lesson(""));
-        mListLesson.add(new Lesson(""));
-        mListLesson.add(new Lesson(""));
+    public List<Lesson> createTestLessons() {
+        List<Lesson> lessons = new ArrayList<>();
+        lessons.add(new Lesson("Toán"));
+        lessons.add(new Lesson("IT"));
+        lessons.add(new Lesson("Tiếng Anh"));
+        lessons.add(new Lesson("Lý"));
+        lessons.add(new Lesson("Hóa"));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        lessons.add(new Lesson(""));
+        return lessons;
     }
 
-    private void createTestCells() {
-        mListCellData = new ArrayList<>();
-        mListCellData.add(new CellData(new Lesson("Math")));
-        mListCellData.add(new CellData(new Lesson("IT")));
-        mListCellData.add(new CellData(new Lesson("English")));
-        mListCellData.add(new CellData(new Lesson("Physic")));
-        mListCellData.add(new CellData(new Lesson("Chermistry")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("IT")));
-        mListCellData.add(new CellData(new Lesson("English")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Chermistry")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Math")));
-        mListCellData.add(new CellData(new Lesson("IT")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Physic")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Math")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Physic")));
-        mListCellData.add(new CellData(new Lesson("Chermistry")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Math")));
-        mListCellData.add(new CellData(new Lesson("IT")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Physic")));
-        mListCellData.add(new CellData(new Lesson("Chermistry")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Math")));
-        mListCellData.add(new CellData(new Lesson("IT")));
-        mListCellData.add(new CellData(new Lesson("English")));
-        mListCellData.add(new CellData(new Lesson("")));
-        mListCellData.add(new CellData(new Lesson("Chermistry")));
-        mListCellData.add(new CellData(new Lesson("")));
+    private List<CellData> createEmptyCells() {
+        List<CellData> cellDatas = new ArrayList<>();
+        for (int i = 0; i < 49; i++) {
+            cellDatas.add(new CellData(new Lesson("")));
+        }
+        return cellDatas;
     }
 
     @Override
@@ -304,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements ClickListener {
                     Lesson lesson = data.getParcelableExtra("KEY_INTENT_RESULT");
                     if (lesson != null) {
                         String newName = lesson.getName();
-                        mListLesson.get(mPositionEdit).setName(newName);
+                        mListLesson.set(mPositionEdit,new Lesson(newName));
                         mLessonAdapter.notifyDataSetChanged();
                     }
                 }

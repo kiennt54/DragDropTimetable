@@ -23,11 +23,16 @@ public class EditActivity extends AppCompatActivity {
 
     private Lesson mLesson;
 
+    private String mOldLesson;
+
     private final View.OnClickListener mBtnCancelClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intentBack = new Intent(EditActivity.this, MainActivity.class);
-            startActivity(intentBack);
+            mLesson.setName(mOldLesson);
+            Intent intentEdit = new Intent();
+            intentEdit.putExtra("KEY_INTENT_RESULT", mLesson);
+            setResult(RESULT_OK, intentEdit);
+            finish();
         }
     };
 
@@ -64,6 +69,7 @@ public class EditActivity extends AppCompatActivity {
         if (intentReceived != null) {
             mLesson = intentReceived.getParcelableExtra("KEY_INTENT_EDIT");
             nameLesson = mLesson.getName();
+            mOldLesson = nameLesson;
         }
 
         if (nameLesson != null) {

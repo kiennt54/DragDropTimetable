@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <dimen name="widget_margin">1dp</dimen>
+    <dimen name="edit_button_width">240dp</dimen>
+    <dimen name="single_cell_width">80dp</dimen>
+    <dimen name="single_cell_height">40dp</dimen>
+    <dimen name="gridview_widget_width">560dp</dimen>
+    <dimen name="gridview_widget_height">280dp</dimen>
+    <dimen name="widget_min_witdh">540dp</dimen>
+    <dimen name="widget_min_height">320dp</dimen>
+
+</resources>

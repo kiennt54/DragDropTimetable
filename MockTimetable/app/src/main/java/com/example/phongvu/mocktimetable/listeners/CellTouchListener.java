@@ -9,18 +9,15 @@ import android.view.View;
 import com.example.phongvu.mocktimetable.activities.MainActivity;
 import com.example.phongvu.mocktimetable.adapters.TableAdapter;
 import com.example.phongvu.mocktimetable.models.CellData;
-
 import java.util.HashMap;
-
-import static com.example.phongvu.mocktimetable.commons.Constants.TIME_TABLE_DRAG;
-
+import static com.example.phongvu.mocktimetable.commons.Constants.TIMETABLE_DRAG;
 public class CellTouchListener implements View.OnTouchListener{
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
-    TableAdapter.CellHolder mCellHolder;
+    private TableAdapter.CellHolder mCellHolder;
 
-    TableAdapter mTableAdapter;
+    private TableAdapter mTableAdapter;
 
     public CellTouchListener(TableAdapter tableAdapter, RecyclerView recyclerView, TableAdapter.CellHolder cellHolder){
         this.mRecyclerView = recyclerView;
@@ -36,7 +33,7 @@ public class CellTouchListener implements View.OnTouchListener{
             CellData cellData = mTableAdapter.getmListCellData().get(mCellHolder.getAdapterPosition());
             MainActivity.draggingCell = new HashMap<>();
             MainActivity.draggingCell.put(mRecyclerView.getChildAdapterPosition(view),cellData);
-            MainActivity.dragMode = TIME_TABLE_DRAG;
+            MainActivity.dragMode = TIMETABLE_DRAG;
             ClipData dragData = ClipData.newPlainText("","");
             View.DragShadowBuilder dragShadowBuilder = new View.DragShadowBuilder(view);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {

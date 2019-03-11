@@ -15,7 +15,9 @@ import com.example.phongvu.mocktimetable.models.Lesson;
 
 import java.util.ArrayList;
 
-public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHolder> {
+import static com.example.phongvu.mocktimetable.commons.Constants.NUMCELL_TABLE_LESSON;
+
+public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHolder>{
 
     private ArrayList<Lesson> mListLesson;
 
@@ -23,15 +25,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHold
 
     private ClickListener mClickListener;
 
-    public boolean isTouch = true;
+    private boolean mIsItemTouchable = true;
+
+    private ViewGroup mParent;
 
     public void setClickListener(ClickListener clickListener) {
         mClickListener = clickListener;
     }
 
-    public LessonAdapter(ArrayList<Lesson> mListLesson, Context mContext) {
+    public LessonAdapter(ArrayList<Lesson> mListLesson, Context mContext,boolean isItemTouchable) {
         this.mListLesson = mListLesson;
         this.mContext = mContext;
+        this.mIsItemTouchable = isItemTouchable;
     }
 
     @NonNull
@@ -39,20 +44,18 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHold
     public LessonHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.single_cell_layout, viewGroup, false);
         LessonHolder lessonHolder = new LessonHolder(view);
-        if (isTouch) {
-            view.setOnTouchListener(new LessonTouchListener(this, lessonHolder, (RecyclerView) viewGroup));
-        } else {
-            view.setOnTouchListener(null);
-        }
-
-
+        mParent = viewGroup;
         return lessonHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull LessonHolder lessonHolder, final int i) {
         lessonHolder.textView.setText(mListLesson.get(i).getName());
-
+        if (mIsItemTouchable) {
+            lessonHolder.itemView.setOnTouchListener(new LessonTouchListener(this, lessonHolder, (RecyclerView) mParent));
+        } else {
+            lessonHolder.itemView.setOnTouchListener(null);
+        }
         lessonHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -63,7 +66,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHold
 
     @Override
     public int getItemCount() {
-        return mListLesson.size();
+        return NUMCELL_TABLE_LESSON;
     }
 
     public static class LessonHolder extends RecyclerView.ViewHolder {
@@ -72,7 +75,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHold
 
         public LessonHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textview);
+            textView = itemView.findViewById(R.id.txt_subject);
         }
     }
 
@@ -84,4 +87,7 @@ public class LessonAdapter extends RecyclerView.Adapter<LessonAdapter.LessonHold
         this.mListLesson = mListLesson;
     }
 
+    public void setmIsItemTouchable(boolean mIsItemTouchable) {
+        this.mIsItemTouchable = mIsItemTouchable;
+    }
 }

@@ -3,6 +3,8 @@ package com.example.phongvu.mocktimetable.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Objects;
+
 public class CellData implements Parcelable {
 
     Lesson lesson;
@@ -11,7 +13,11 @@ public class CellData implements Parcelable {
         this.lesson = lesson;
     }
 
+    public CellData() {
+    }
+
     protected CellData(Parcel in) {
+
     }
 
     public static final Creator<CellData> CREATOR = new Creator<CellData>() {

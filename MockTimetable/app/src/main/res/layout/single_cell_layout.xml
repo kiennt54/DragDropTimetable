@@ -1,16 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="80dp"
-    android:layout_height="40dp"
+    android:layout_width="@dimen/single_cell_width"
+    android:layout_height="@dimen/single_cell_height"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/border_textview"
     android:gravity="center">
 
     <TextView
-        android:id="@+id/textview"
+        android:id="@+id/txt_subject"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:text="1"
         android:gravity="center"
+        android:maxLength="10"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="18sp"

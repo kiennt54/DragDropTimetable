@@ -16,15 +16,17 @@ import com.example.phongvu.mocktimetable.commons.Constants;
 
 import java.util.ArrayList;
 
+import static com.example.phongvu.mocktimetable.commons.Constants.NUMCELL_TABLE_TIMETABLE;
+
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.CellHolder> {
 
     private ArrayList<CellData> mListCellData;
 
     private Context mContext;
 
-    final int VIEW_TYPE_HEADERCOLUMN = 0;
-    final int VIEW_TYPE_HEADERROW = 1;
-    final int VIEW_TYPE_CELLDATA = 2;
+    private ViewGroup mViewGroup;
+    private String[] mWeek = {"", "Monday", "Tuesday", "Wednesday", "Thurday", "Friday", "Saturnday"};
+    private String[] mLesson = {"Lesson 1", "Lesson 2", "Lesson 3", "Lesson 4", "Lesson 5", "Lesson 6"};
 
     public TableAdapter(ArrayList<CellData> listCellData, Context context) {
         this.mListCellData = listCellData;
@@ -41,8 +43,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.CellHolder> 
     public CellHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         View itemView = LayoutInflater.from(mContext).inflate(R.layout.single_cell_layout, parent, false);
         CellHolder cellHolder = new CellHolder(itemView);
-        itemView.setOnTouchListener(new CellTouchListener(this,(RecyclerView) parent,cellHolder));
-        itemView.setOnDragListener(new CellDragAndDropListener(this, (RecyclerView) parent));
+        this.mViewGroup = parent;
         return cellHolder;
     }
 
@@ -50,11 +51,28 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.CellHolder> 
     public void onBindViewHolder(@NonNull CellHolder cellHolder, int position) {
         CellData cellData = mListCellData.get(position);
         cellHolder.textView.setText(cellData.getLesson().getName());
+
+        if (checkHeader(position)) {
+            cellHolder.itemView.setOnTouchListener(null);
+            cellHolder.itemView.setOnDragListener(null);
+        } else {
+            cellHolder.itemView.setOnTouchListener(new CellTouchListener(this, (RecyclerView) mViewGroup, cellHolder));
+            cellHolder.itemView.setOnDragListener(new CellDragAndDropListener(this, (RecyclerView) mViewGroup));
+        }
+
+        if (position > 0 && position < 7) {
+            cellHolder.textView.setText(mWeek[position]);
+        }
+
+        if ((position % 7 == 0) && (position < 43) && (position > 0)) {
+            cellHolder.textView.setText(mLesson[(position / 7) - 1]);
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return Constants.NUM_CELL_TABLE;
+        return NUMCELL_TABLE_TIMETABLE;
     }
 
 
@@ -63,7 +81,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.CellHolder> 
 
         public CellHolder(View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textview);
+            textView = itemView.findViewById(R.id.txt_subject);
         }
     }
 
@@ -73,6 +91,16 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.CellHolder> 
 
     public void setmListCellData(ArrayList<CellData> mListCellData) {
         this.mListCellData = mListCellData;
+    }
+
+    public boolean checkHeader(int i) {
+        if (i > 0 && i < 7) {
+            return true;
+        }
+        if (i % 7 == 0 && i < 43) {
+            return true;
+        }
+        return false;
     }
 
 

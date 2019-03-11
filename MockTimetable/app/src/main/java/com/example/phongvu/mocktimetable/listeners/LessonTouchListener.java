@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -17,15 +18,15 @@ import com.example.phongvu.mocktimetable.models.Lesson;
 
 import java.util.HashMap;
 
-import static com.example.phongvu.mocktimetable.commons.Constants.LIST_LESSON_DRAG;
+import static com.example.phongvu.mocktimetable.commons.Constants.LISTLESSON_DRAG;
 
 public class LessonTouchListener implements View.OnTouchListener {
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
-    LessonAdapter.LessonHolder mLessonHolder;
+    private LessonAdapter.LessonHolder mLessonHolder;
 
-    LessonAdapter mLessonAdapter;
+    private LessonAdapter mLessonAdapter;
 
     public LessonTouchListener(LessonAdapter mLessonAdapter, LessonAdapter.LessonHolder mLessonHolder, RecyclerView mRecyclerView) {
         this.mRecyclerView = mRecyclerView;
@@ -41,7 +42,7 @@ public class LessonTouchListener implements View.OnTouchListener {
             CellData cellData = new CellData(mLessonAdapter.getmListLesson().get(mLessonHolder.getAdapterPosition()));
             MainActivity.draggingCell = new HashMap<>();
             MainActivity.draggingCell.put(mRecyclerView.getChildAdapterPosition(view),cellData);
-            MainActivity.dragMode = LIST_LESSON_DRAG;
+            MainActivity.dragMode = LISTLESSON_DRAG;
             ClipData data = ClipData.newPlainText("", "");
             View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
             view.startDrag(data, shadowBuilder, cellData, 0);

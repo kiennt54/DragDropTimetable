@@ -6,4 +6,9 @@
     <string name="thursday">Thứ 5</string>
     <string name="friday">Thứ 6</string>
     <string name="Saturday">Thứ 7</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="title_table_timetable">Timetable</string>
+    <string name="title_table_lesson">List of lesson name</string>
+    <string name="title_widget">Schedule</string>
 </resources>
