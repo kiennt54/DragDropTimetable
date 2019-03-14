@@ -1,7 +1,3 @@
 # DragDropTimetable
-A Mock project building a timetable manager
--Support drag and drop
--Editable timetable
--Show widget
--Voice input
+A Mock project building a timetable manager that support drag&drop and show widget
 
