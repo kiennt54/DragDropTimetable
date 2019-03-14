@@ -2,6 +2,7 @@
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:initialKeyguardLayout="@layout/app_widget_schedule"
     android:initialLayout="@layout/app_widget_schedule"
+    android:previewImage="@drawable/anh"
     android:minWidth="@dimen/widget_min_witdh"
     android:minHeight="@dimen/widget_min_height"
     android:widgetCategory="home_screen"/>

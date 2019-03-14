@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="10dp"
+    android:background="#FFFF"
     android:orientation="vertical">
 
     <TextView
@@ -13,43 +15,52 @@
         android:textStyle="bold" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_marginTop="15dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/btn_name_lesson_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_width="100dp"
+            android:background="@drawable/border_button"
+            android:layout_marginEnd="50dp"
+            tools:text="Chemistry"
+            android:layout_height="45dp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/edt_new_name_lesson"
-                android:layout_width="match_parent"
+                android:hint="Enter a new  lesson name"
+                android:layout_width="350dp"
                 android:maxLength="10"
                 android:layout_height="wrap_content" />
 
             <LinearLayout
+                android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/btn_edit_ok"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_button"
+                    android:layout_width="100dp"
+                    android:layout_height="45dp"
                     android:text="Ok"
+                    android:layout_marginEnd="25dp"
                     android:textAllCaps="false" />
 
                 <Button
                     android:id="@+id/btn_edit_cancel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:background="@drawable/border_button"
+                    android:layout_width="100dp"
+                    android:layout_height="45dp"
                     android:text="Cancel"
                     android:textAllCaps="false" />
 

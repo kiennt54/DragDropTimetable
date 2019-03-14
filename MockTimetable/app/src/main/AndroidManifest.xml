@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.phongvu.mocktimetable">
+    package="com.example.kiennt54.timetable">
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        <receiver android:name=".widgets.AppWidgetSchedule">
+        <receiver android:name="com.example.kiennt54.timetable.widgets.AppWidgetSchedule">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -20,17 +20,15 @@
         </receiver>
 
         <service
-            android:name=".widgets.ScheduleService"
+            android:name="com.example.kiennt54.timetable.widgets.ScheduleService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name="com.example.kiennt54.timetable.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.EditActivity" />
+        <activity android:name="com.example.kiennt54.timetable.activities.EditActivity" />
 
     </application>
 
